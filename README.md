@@ -32,12 +32,11 @@ autodash/
 1. Navigate to the server directory:
    ```bash
    cd server
-   npm install
    ```
 
 2. Install required dependencies:
    ```bash
-   npm install express cors csv-parser date-fns
+   npm install 
    ```
 
 3. Start the server:
