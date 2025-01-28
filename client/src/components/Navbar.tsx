@@ -2,68 +2,93 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  IconButton,
   Box,
   Avatar,
   Button,
-} from '@mui/material';
-import HelpIcon from '@mui/icons-material/Help';
+} from "@mui/material";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import logo from "../assets/logo.png";
 
 const Navbar = () => {
   return (
-    <AppBar position="static" color="default" elevation={1} sx={{ backgroundColor: 'white' }}>
-      <Toolbar>
+    <AppBar
+      position="static"
+      color="default"
+      elevation={1}
+      sx={{
+        backgroundColor: "#000",
+        color: "#fff",
+        borderBottom: "1px solid #E5E7EB",
+      }}
+    >
+      <Toolbar sx={{ minHeight: "48px !important", px: 2 }}>
         {/* Logo and Title */}
-        <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+        <Box
+          sx={{ display: "flex", alignItems: "center", flexGrow: 1, gap: 1 }}
+        >
+          <Box
+            component="img"
+            src={logo}
+            alt="AutoDash"
+            sx={{ height: 44, width: 44 }}
+          />
           <Typography
-            variant="h6"
+            variant="body1"
             component="div"
             sx={{
-              fontWeight: 600,
-              color: '#1a1a1a',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1
+              fontWeight: 500,
+              color: "#111827",
+              fontSize: "14px",
             }}
           >
-            <Box
-              component="img"
-              src="/logo.png"
-              alt="AutoDash"
-              sx={{ height: 32, width: 32 }}
-            />
             Admin Console
           </Typography>
-          <Button
-            size="small"
-            variant="outlined"
-            sx={{
-              ml: 2,
-              textTransform: 'none',
-              borderColor: '#e0e0e0',
-              color: '#666',
-              '&:hover': {
-                borderColor: '#bdbdbd'
-              }
-            }}
-          >
-            ACCESS LEVEL
-          </Button>
         </Box>
 
         {/* Right side items */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <IconButton
-            size="small"
-            sx={{ color: '#666' }}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+          {/* Support Button */}
+          <Button
+            startIcon={<HelpOutlineIcon sx={{ fontSize: 20 }} />}
+            sx={{
+              color: "#4B5563",
+              fontSize: "14px",
+              textTransform: "none",
+              fontWeight: 400,
+              "&:hover": {
+                backgroundColor: "transparent",
+              },
+            }}
           >
-            <HelpIcon /> Support
-          </IconButton>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Avatar sx={{ width: 32, height: 32, bgcolor: '#1976d2' }}>J</Avatar>
-            <Typography variant="body2" color="text.secondary">
+            Support
+          </Button>
+
+          {/* User Profile */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Avatar
+              sx={{
+                width: 28,
+                height: 28,
+                bgcolor: "#E5E7EB",
+                color: "#4B5563",
+                fontSize: "14px",
+                fontWeight: 500,
+              }}
+            >
+              J
+            </Avatar>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "#4B5563",
+                fontSize: "14px",
+                fontWeight: 400,
+              }}
+            >
               Jane
             </Typography>
+            <KeyboardArrowDownIcon sx={{ color: "#4B5563", fontSize: 20 }} />
           </Box>
         </Box>
       </Toolbar>

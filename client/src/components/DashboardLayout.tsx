@@ -55,10 +55,14 @@ const DashboardLayout = () => {
   }, [dispatch, filters]);
 
   const handleFilterChange = (newFilters: any) => {
-    setFilters(prev => ({
-      ...prev,
-      ...newFilters
-    }));
+    setFilters(prev => {
+      const updatedFilters = {
+        ...prev,
+        ...newFilters
+      };
+      dispatch(fetchInventoryData(updatedFilters));
+      return updatedFilters;
+    });
   };
 
   if (loading) {
@@ -128,7 +132,10 @@ const DashboardLayout = () => {
                   ))}
                 </Select>
               </FormControl>
-              <FiltersDropdown onApplyFilters={handleFilterChange} currentFilters={filters} />
+              <FiltersDropdown 
+                currentFilters={filters} 
+                onApplyFilters={handleFilterChange} 
+              />
             </Box>
           </Box>
 

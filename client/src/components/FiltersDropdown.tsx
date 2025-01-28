@@ -3,9 +3,18 @@ import { Button } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import FilterModal from './FilterModal';
 import { useAppDispatch } from '../app/hooks';
-import { setFilters } from '../features/dashboard/dashboardSlice';
+import { fetchInventoryData } from '../features/dashboard/dashboardSlice';
 
-const FiltersDropdown = () => {
+interface FiltersDropdownProps {
+  currentFilters: {
+    dealer: string;
+    makes: string[];
+    duration: string;
+  };
+  onApplyFilters: (filters: any) => void;
+}
+
+const FiltersDropdown: React.FC<FiltersDropdownProps> = ({ currentFilters, onApplyFilters }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -13,7 +22,9 @@ const FiltersDropdown = () => {
   const handleClose = () => setOpen(false);
 
   const handleApplyFilters = (filters: any) => {
-    dispatch(setFilters(filters));
+    onApplyFilters(filters);
+    dispatch(fetchInventoryData(filters));
+    handleClose();
   };
 
   return (
@@ -36,6 +47,7 @@ const FiltersDropdown = () => {
         open={open}
         onClose={handleClose}
         onApplyFilters={handleApplyFilters}
+        currentFilters={currentFilters}
       />
     </>
   );

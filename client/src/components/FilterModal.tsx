@@ -26,26 +26,23 @@ interface FilterModalProps {
   open: boolean;
   onClose: () => void;
   onApplyFilters: (filters: any) => void;
+  currentFilters: {
+    dealer: string;
+    makes: string[];
+    duration: string;
+  };
 }
 
-const FilterModal: React.FC<FilterModalProps> = ({ open, onClose, onApplyFilters }) => {
+const FilterModal: React.FC<FilterModalProps> = ({
+  open,
+  onClose,
+  onApplyFilters,
+  currentFilters
+}) => {
   const [dealers, setDealers] = useState<Dealer[]>([]);
-  const [selectedDealer, setSelectedDealer] = useState('');
-  const [filters, setFilters] = useState({
-    make: {
-      Ford: false,
-      Cadillac: false,
-      Jeep: false,
-    },
-    duration: {
-      'Last Month': false,
-      'This Month': false,
-      'Last 3 Months': false,
-      'Last 6 Months': false,
-      'This Year': false,
-      'Last Year': false,
-    },
-  });
+  const [selectedDealer, setSelectedDealer] = useState(currentFilters.dealer || '');
+  const [selectedMakes, setSelectedMakes] = useState<string[]>(currentFilters.makes || []);
+  const [selectedDuration, setSelectedDuration] = useState(currentFilters.duration || '');
   const [makes, setMakes] = useState<string[]>([]);
 
   useEffect(() => {
@@ -64,7 +61,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ open, onClose, onApplyFilters
   useEffect(() => {
     const fetchMakes = async () => {
       try {
-        const response = await axios.get(endpoints.makes);
+        const response = await axios.get(`${endpoints.inventory}/makes`);
         setMakes(response.data?.makes || []);
       } catch (error) {
         console.error('Error fetching makes:', error);
@@ -78,38 +75,32 @@ const FilterModal: React.FC<FilterModalProps> = ({ open, onClose, onApplyFilters
     setSelectedDealer(event.target.value);
   };
 
-  const handleCheckboxChange = (category: 'make' | 'duration', item: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      [category]: {
-        ...prev[category],
-        [item]: !prev[category][item],
-      },
-    }));
+  const handleMakeChange = (make: string) => {
+    setSelectedMakes(prev => {
+      if (prev.includes(make)) {
+        return prev.filter(m => m !== make);
+      }
+      return [...prev, make];
+    });
+  };
+
+  const handleDurationChange = (duration: string) => {
+    setSelectedDuration(duration);
   };
 
   const handleApplyFilters = () => {
-    onApplyFilters({ ...filters, dealer: selectedDealer });
+    onApplyFilters({
+      dealer: selectedDealer,
+      makes: selectedMakes,
+      duration: selectedDuration
+    });
     onClose();
   };
 
   const handleRemoveAllFilters = () => {
-    setFilters({
-      make: {
-        Ford: false,
-        Cadillac: false,
-        Jeep: false,
-      },
-      duration: {
-        'Last Month': false,
-        'This Month': false,
-        'Last 3 Months': false,
-        'Last 6 Months': false,
-        'This Year': false,
-        'Last Year': false,
-      },
-    });
     setSelectedDealer('');
+    setSelectedMakes([]);
+    setSelectedDuration('');
   };
 
   return (
@@ -129,7 +120,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ open, onClose, onApplyFilters
               label="Select a Dealer"
             >
               <MenuItem value="">All Dealers</MenuItem>
-              {Array.isArray(dealers) && dealers.map((dealer) => (
+              {dealers.map((dealer) => (
                 <MenuItem key={dealer.id} value={dealer.id}>
                   {dealer.name}
                 </MenuItem>
@@ -140,13 +131,13 @@ const FilterModal: React.FC<FilterModalProps> = ({ open, onClose, onApplyFilters
 
         <Typography variant="subtitle2" sx={{ mb: 1 }}>MAKE</Typography>
         <FormGroup>
-          {Object.entries(filters.make).map(([make, checked]) => (
+          {makes.map((make) => (
             <FormControlLabel
               key={make}
               control={
                 <Checkbox
-                  checked={checked}
-                  onChange={() => handleCheckboxChange('make', make)}
+                  checked={selectedMakes.includes(make)}
+                  onChange={() => handleMakeChange(make)}
                 />
               }
               label={make}
@@ -156,13 +147,20 @@ const FilterModal: React.FC<FilterModalProps> = ({ open, onClose, onApplyFilters
 
         <Typography variant="subtitle2" sx={{ mt: 2, mb: 1 }}>DURATION</Typography>
         <FormGroup>
-          {Object.entries(filters.duration).map(([duration, checked]) => (
+          {[
+            'Last Month',
+            'This Month',
+            'Last 3 Months',
+            'Last 6 Months',
+            'This Year',
+            'Last Year'
+          ].map((duration) => (
             <FormControlLabel
               key={duration}
               control={
                 <Checkbox
-                  checked={checked}
-                  onChange={() => handleCheckboxChange('duration', duration)}
+                  checked={selectedDuration === duration}
+                  onChange={() => handleDurationChange(duration)}
                 />
               }
               label={duration}
