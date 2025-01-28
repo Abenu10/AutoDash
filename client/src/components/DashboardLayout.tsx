@@ -20,6 +20,7 @@ import MSRPTrends from "./MSRPTrends";
 import Navbar from "./Navbar";
 import axios from "axios";
 import { endpoints } from "../utils/api";
+import { Analytics } from "@vercel/analytics/react"
 
 interface Dealer {
   id: string;
@@ -190,6 +191,7 @@ const DashboardLayout = () => {
           </Grid>
         </Box>
       </Container>
+      <Analytics />
     </Box>
   );
 };
