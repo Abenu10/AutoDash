@@ -15,6 +15,7 @@ import {
   InputLabel,
 } from '@mui/material';
 import axios from 'axios';
+import { endpoints } from '../utils/api';
 
 interface Dealer {
   id: string;
@@ -50,10 +51,11 @@ const FilterModal: React.FC<FilterModalProps> = ({ open, onClose, onApplyFilters
   useEffect(() => {
     const fetchDealers = async () => {
       try {
-        const response = await axios.get('http://localhost:7071/api/dealers');
-        setDealers(response.data.dealers);
+        const response = await axios.get(endpoints.dealers);
+        setDealers(response.data?.dealers || []);
       } catch (error) {
         console.error('Error fetching dealers:', error);
+        setDealers([]);
       }
     };
     fetchDealers();
@@ -62,10 +64,11 @@ const FilterModal: React.FC<FilterModalProps> = ({ open, onClose, onApplyFilters
   useEffect(() => {
     const fetchMakes = async () => {
       try {
-        const response = await axios.get('http://localhost:7071/api/makes');
-        setMakes(response.data.makes);
+        const response = await axios.get(endpoints.makes);
+        setMakes(response.data?.makes || []);
       } catch (error) {
         console.error('Error fetching makes:', error);
+        setMakes([]);
       }
     };
     fetchMakes();
@@ -125,7 +128,8 @@ const FilterModal: React.FC<FilterModalProps> = ({ open, onClose, onApplyFilters
               onChange={handleDealerChange}
               label="Select a Dealer"
             >
-              {dealers.map((dealer) => (
+              <MenuItem value="">All Dealers</MenuItem>
+              {Array.isArray(dealers) && dealers.map((dealer) => (
                 <MenuItem key={dealer.id} value={dealer.id}>
                   {dealer.name}
                 </MenuItem>

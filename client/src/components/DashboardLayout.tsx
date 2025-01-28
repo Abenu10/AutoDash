@@ -19,6 +19,7 @@ import HistoryLog from "./HistoryLog";
 import MSRPTrends from "./MSRPTrends";
 import Navbar from "./Navbar";
 import axios from "axios";
+import { endpoints } from "../utils/api";
 
 interface Dealer {
   id: string;
@@ -38,10 +39,11 @@ const DashboardLayout = () => {
   useEffect(() => {
     const fetchDealers = async () => {
       try {
-        const response = await axios.get("http://localhost:7071/api/dealers");
-        setDealers(response.data.dealers || []);
+        const response = await axios.get(endpoints.dealers);
+        setDealers(response.data?.dealers || []);
       } catch (error) {
         console.error("Error fetching dealers:", error);
+        setDealers([]);
       }
     };
     fetchDealers();
@@ -81,6 +83,15 @@ const DashboardLayout = () => {
     );
   }
 
+  // Default stats if not available
+  const defaultStats = {
+    NEW: { count: 0, totalMSRP: 0, avgMSRP: 0 },
+    USED: { count: 0, totalMSRP: 0, avgMSRP: 0 },
+    CPO: { count: 0, totalMSRP: 0, avgMSRP: 0 }
+  };
+
+  const currentStats = stats || defaultStats;
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Navbar />
@@ -109,7 +120,7 @@ const DashboardLayout = () => {
                   displayEmpty
                 >
                   <MenuItem value="">All Dealers</MenuItem>
-                  {dealers.map((dealer) => (
+                  {Array.isArray(dealers) && dealers.map((dealer) => (
                     <MenuItem key={dealer.id} value={dealer.id}>
                       {dealer.name}
                     </MenuItem>
@@ -128,37 +139,37 @@ const DashboardLayout = () => {
           {/* Stats Cards */}
           <Box sx={{ display: "flex", gap: 2, mb: 4, flexWrap: "wrap" }}>
             <StatsCard
-              count={stats.NEW.count}
+              count={currentStats.NEW.count}
               label="New Units"
-              value={stats.NEW.totalMSRP}
+              value={currentStats.NEW.totalMSRP}
               valueLabel="New MSRP"
               variant="new"
             />
             <StatsCard
-              count={stats.NEW.count}
+              count={currentStats.NEW.count}
               label="New Units"
-              value={stats.NEW.avgMSRP}
+              value={currentStats.NEW.avgMSRP}
               valueLabel="New Avg. MSRP"
               variant="new"
             />
             <StatsCard
-              count={stats.USED.count}
+              count={currentStats.USED.count}
               label="Used Units"
-              value={stats.USED.totalMSRP}
+              value={currentStats.USED.totalMSRP}
               valueLabel="Used MSRP"
               variant="used"
             />
             <StatsCard
-              count={stats.USED.count}
+              count={currentStats.USED.count}
               label="Used Units"
-              value={stats.USED.avgMSRP}
+              value={currentStats.USED.avgMSRP}
               valueLabel="Used Avg. MSRP"
               variant="used"
             />
             <StatsCard
-              count={stats.CPO.count}
+              count={currentStats.CPO.count}
               label="CPO Units"
-              value={stats.CPO.totalMSRP}
+              value={currentStats.CPO.totalMSRP}
               valueLabel="CPO MSRP"
               variant="cpo"
             />

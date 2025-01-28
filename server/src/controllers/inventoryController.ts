@@ -72,10 +72,8 @@ const filterByDuration = (data: Vehicle[], duration?: string): Vehicle[] => {
   );
 };
 
-const calculateStats = (
-  vehicles: Vehicle[]
-): Record<string, InventoryStats> => {
-  const stats: Record<string, InventoryStats> = {
+const calculateStats = (vehicles: Vehicle[]): InventoryStats => {
+  const stats: InventoryStats = {
     NEW: { count: 0, totalMSRP: 0, avgMSRP: 0 },
     USED: { count: 0, totalMSRP: 0, avgMSRP: 0 },
     CPO: { count: 0, totalMSRP: 0, avgMSRP: 0 },
@@ -83,7 +81,7 @@ const calculateStats = (
 
   vehicles.forEach((vehicle) => {
     const condition = vehicle.condition;
-    stats[condition].count++;
+    stats[condition].count += 1;
     stats[condition].totalMSRP += vehicle.msrp;
   });
 
@@ -124,25 +122,34 @@ const getInventoryData = async (req: Request, res: Response) => {
         // Add duration calculation
         const calculateCutoffDate = (duration: string) => {
           const now = new Date();
-          switch(duration) {
-            case 'last_month': return new Date(now.setMonth(now.getMonth() - 1));
-            case 'last_3_months': return new Date(now.setMonth(now.getMonth() - 3));
-            case 'last_6_months': return new Date(now.setMonth(now.getMonth() - 6));
-            case 'this_year': return new Date(now.getFullYear(), 0, 1);
-            case 'last_year': return new Date(now.getFullYear() - 1, 0, 1);
-            default: return new Date(0);
+          switch (duration) {
+            case "last_month":
+              return new Date(now.setMonth(now.getMonth() - 1));
+            case "last_3_months":
+              return new Date(now.setMonth(now.getMonth() - 3));
+            case "last_6_months":
+              return new Date(now.setMonth(now.getMonth() - 6));
+            case "this_year":
+              return new Date(now.getFullYear(), 0, 1);
+            case "last_year":
+              return new Date(now.getFullYear() - 1, 0, 1);
+            default:
+              return new Date(0);
           }
         };
 
         // Apply filters
-        if (dealer) filteredData = filteredData.filter(v => v.dealer === dealer);
+        if (dealer)
+          filteredData = filteredData.filter((v) => v.dealer === dealer);
         if (makes) {
           const makeList = Array.isArray(makes) ? makes : [makes];
-          filteredData = filteredData.filter(v => makeList.includes(v.make));
+          filteredData = filteredData.filter((v) => makeList.includes(v.make));
         }
         if (duration) {
           const cutoff = calculateCutoffDate(duration as string);
-          filteredData = filteredData.filter(v => new Date(v.dateAdded) >= cutoff);
+          filteredData = filteredData.filter(
+            (v) => new Date(v.dateAdded) >= cutoff
+          );
         }
 
         // Calculate stats

@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { DashboardState, Vehicle, InventoryStats } from '../../types/inventory';
+import { endpoints } from '../../utils/api';
 
 const initialState: DashboardState = {
   vehicles: [],
@@ -31,14 +32,12 @@ export const fetchInventoryData = createAsyncThunk(
     const state = getState() as { dashboard: DashboardState };
     const { dealer, make, duration } = state.dashboard.filters;
     
-    const response = await axios.get<{
-      data: Vehicle[];
-      recentData: Vehicle[];
-      stats: InventoryStats;
-    }>('http://localhost:7071/api/inventory', {
-      params: { dealer, make, duration }
-    });
+    const queryParams = new URLSearchParams();
+    if (dealer) queryParams.append('dealer', dealer);
+    if (make?.length) queryParams.append('make', make.join(','));
+    if (duration) queryParams.append('duration', duration);
     
+    const response = await axios.get(`${endpoints.inventory}?${queryParams}`);
     return response.data;
   }
 );
@@ -59,13 +58,17 @@ const dashboardSlice = createSlice({
       })
       .addCase(fetchInventoryData.fulfilled, (state, action) => {
         state.loading = false;
-        state.vehicles = action.payload.data;
-        state.recentData = action.payload.recentData;
-        state.stats = action.payload.stats;
+        state.vehicles = action.payload.data || [];
+        state.recentData = action.payload.recentData || [];
+        state.stats = action.payload.stats || {
+          NEW: { count: 0, totalMSRP: 0, avgMSRP: 0 },
+          USED: { count: 0, totalMSRP: 0, avgMSRP: 0 },
+          CPO: { count: 0, totalMSRP: 0, avgMSRP: 0 }
+        };
       })
       .addCase(fetchInventoryData.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch data';
+        state.error = action.error.message || 'Failed to fetch inventory data';
       });
   }
 });
