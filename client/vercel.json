@@ -6,11 +6,11 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "http://localhost:7071/api"
+    "VITE_API_URL": "https://autodash.onrender.com/api"
   },
   "build": {
     "env": {
-      "VITE_API_URL": "http://localhost:7071/api"
+      "VITE_API_URL": "https://autodash.onrender.com/api"
     }
   }
 }
