@@ -191,7 +191,7 @@ const DashboardLayout = () => {
           </Grid>
         </Box>
       </Container>
-      <Analytics />
+    <Analytics />
     </Box>
   );
 };
