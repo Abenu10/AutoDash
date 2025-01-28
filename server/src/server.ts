@@ -9,7 +9,10 @@ const app = express();
 const PORT = process.env.PORT || 7071;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['https://auto-dash-pi.vercel.app', 'http://localhost:5173'],
+    credentials: true
+}));
 app.use(express.json());
 
 // Routes
