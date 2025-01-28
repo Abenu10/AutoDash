@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:7071/api';
+export const API_URL = import.meta.env.VITE_API_URL || 'https://autodash.onrender.com/api';
 
 export const endpoints = {
     dealers: `${API_URL}/dealers`,
