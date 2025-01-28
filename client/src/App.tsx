@@ -3,7 +3,7 @@ import { ThemeProvider, createTheme } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
-
+import { Analytics } from "@vercel/analytics/react";
 const theme = createTheme({
   palette: {
     mode: "light",
@@ -58,6 +58,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <DashboardLayout />
+        <Analytics />
       </ThemeProvider>
     </Provider>
   );
